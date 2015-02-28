@@ -1,0 +1,38 @@
+services:
+	# parsers
+	- PhpParser\Parser
+	- PhpParser\Lexer\Emulative
+	- ApiGen\ElementReflection\Parser\Parser
+	- ApiGen\ElementReflection\Parser\AnnotationParser
+	- ApiGen\ElementReflection\Parser\DocBlockParser
+
+	# analyzers & builders
+	- ApiGen\ElementReflection\Analyzers\FqnNameAnalyzer
+	- ApiGen\ElementReflection\Analyzers\ValueAnalyzer
+	- ApiGen\ElementReflection\Inheritor\AnnotationInheritor
+	- ApiGen\ElementReflection\PhpParser\Builder\ClassLikeElementsBuilder
+
+	# storage
+	- ApiGen\ElementReflection\Storage\MemoryStorage
+
+	# elements factories
+	- ApiGen\ElementReflection\PhpParser\Factory\ClassConstantReflectionFactoryInterface
+	- ApiGen\ElementReflection\PhpParser\Factory\ClassReflectionFactoryInterface
+	- ApiGen\ElementReflection\PhpParser\Factory\ConstantReflectionFactoryInterface
+	- ApiGen\ElementReflection\PhpParser\Factory\FunctionReflectionFactoryInterface
+	- ApiGen\ElementReflection\PhpParser\Factory\InterfaceReflectionFactoryInterface
+	- ApiGen\ElementReflection\PhpParser\Factory\MethodReflectionFactoryInterface
+	- ApiGen\ElementReflection\PhpParser\Factory\ParameterReflectionFactoryInterface
+	- ApiGen\ElementReflection\PhpParser\Factory\PropertyReflectionFactoryInterface
+	- ApiGen\ElementReflection\PhpParser\Factory\TraitReflectionFactoryInterface
+
+	# internal elements factories
+	- ApiGen\ElementReflection\Php\Factory\ClassConstantReflectionFactoryInterface
+	- ApiGen\ElementReflection\Php\Factory\ClassReflectionFactoryInterface
+	- ApiGen\ElementReflection\Php\Factory\ConstantReflectionFactoryInterface
+	- ApiGen\ElementReflection\Php\Factory\ExtensionReflectionFactoryInterface
+	- ApiGen\ElementReflection\Php\Factory\FunctionReflectionFactoryInterface
+	- ApiGen\ElementReflection\Php\Factory\InterfaceReflectionFactoryInterface
+	- ApiGen\ElementReflection\Php\Factory\MethodReflectionFactoryInterface
+	- ApiGen\ElementReflection\Php\Factory\ParameterReflectionFactoryInterface
+	- ApiGen\ElementReflection\Php\Factory\PropertyReflectionFactoryInterface

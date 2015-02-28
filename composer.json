@@ -1,0 +1,41 @@
+{
+	"name": "apigen/element-reflection",
+	"description": "Parses PHP code to class, constant, property and method elements reflections.",
+	"keywords": ["reflection", "docs", "elements"],
+	"license": "MIT",
+	"authors": [
+		{ "name": "Tomáš Votruba", "homepage": "https://github.com/TomasVotruba", "email": "tomas.vot@gmail.com" }
+	],
+	"require": {
+		"php": ">=5.5",
+		"nikic/php-parser": "~1.1",
+		"nette/finder": "~2.3",
+		"nette/di": "~2.3",
+		"nette/neon": "~2.3",
+		"nette/reflection": "~2.3",
+		"nette/php-generator": "~2.3",
+		"nette/utils": "~2.3"
+	},
+	"require-dev": {
+		"nette/bootstrap": "~2.3",
+		"latte/latte": "~2.3",
+		"nette/application": "~2.3",
+		"nette/mail": "~2.3",
+		"nette/robot-loader": "~2.3",
+		"nette/safe-stream": "~2.3",
+		"tracy/tracy": "~2.3",
+
+		"zenify/coding-standard": "~3.0",
+		"mockery/mockery": "0.9.*"
+	},
+	"autoload": {
+		"psr-4": {
+			"ApiGen\\ElementReflection\\": "src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"ApiGen\\ElementReflection\\Tests\\": "tests"
+		}
+	}
+}

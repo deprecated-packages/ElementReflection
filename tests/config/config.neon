@@ -1,0 +1,2 @@
+extensions:
+	- ApiGen\ElementReflection\DI\ElementReflectionExtension
