@@ -191,7 +191,7 @@ class ParameterReflection extends AbstractReflection implements ParameterReflect
 			foreach ($namespace->stmts as $stmt) {
 				if ($stmt instanceof Use_) {
 					if ($className === $stmt->uses[0]->alias) {
-						return implode($stmt->uses[0]->name->parts, ClassReflection::NS_SEP);
+						return $stmt->uses[0]->name->toString();
 					}
 				}
 			}

@@ -23,6 +23,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\ClassConst;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\TraitUse;
@@ -165,20 +166,18 @@ class ClassLikeElementsBuilder implements ClassLikeElementsBuilderInterface
 
 
 	/**
-	 * @param string $interface
-	 * @param $parentNode
+	 * @param string|Interface_|Name $interface
+	 * @param Node $parentNode
 	 * @return string
 	 */
 	private function detectInterfaceName($interface, $parentNode = NULL)
 	{
-		if ($interface instanceof FullyQualified) {
-			$name = $interface->parts[0];
+		$name = $interface->toString();
 
-		} else {
-			$name = $interface->parts[0];
-			if ($parentNode instanceof Namespace_) {
-				$namespaceName = implode($parentNode->name->parts, AbstractReflection::NS_SEP) . AbstractReflection::NS_SEP;
-				$name = $namespaceName . $name;
+		if ($interface instanceof Name && $parentNode instanceof Namespace_)  {
+			$namespacedName = $parentNode->name->toString() . AbstractReflection::NS_SEP . $name;
+			if (interface_exists($namespacedName)) {
+				return $namespacedName;
 			}
 		}
 

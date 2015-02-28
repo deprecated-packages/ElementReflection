@@ -123,6 +123,11 @@ abstract class AbstractClassLikeReflection extends AbstractReflection
 			if ($this->getParentClass()) {
 				$methods = array_merge($this->getParentClass()->getMethods(), $methods);
 			}
+
+		} elseif ($this instanceof InterfaceReflectionInterface) {
+			foreach ($this->getInterfaces() as $interface) {
+				$methods = array_merge($interface->getMethods(), $methods);
+			}
 		}
 
 		if ($this instanceof TraitsInterface) {
@@ -152,7 +157,7 @@ abstract class AbstractClassLikeReflection extends AbstractReflection
 		$interfaces = [];
 
 		if ($this instanceof InterfacesInterface) {
-			$interfaces = array_merge($this->getOwnInterfaces(), $interfaces);
+			$interfaces = $this->getOwnInterfaces();
 		}
 
 		if ($this instanceof ClassReflectionInterface && $this->getParentClass()) {
@@ -177,9 +182,11 @@ abstract class AbstractClassLikeReflection extends AbstractReflection
 	protected function getOwnInterfaces()
 	{
 		if ($this instanceof InterfaceReflectionInterface) {
+			/** @var AbstractReflection $this */
 			return $this->classLikeElementsBuilder->buildInterfaces($this->node->extends, $this);
 
 		} elseif ($this instanceof ClassReflectionInterface) {
+			/** @var AbstractReflection $this */
 			return $this->classLikeElementsBuilder->buildInterfaces($this->node->implements, $this);
 		}
 	}

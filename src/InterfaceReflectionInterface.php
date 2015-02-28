@@ -14,7 +14,8 @@ use ApiGen\ElementReflection\Behaviors\InterfacesInterface;
 use ApiGen\ElementReflection\Behaviors\MethodsInterface;
 
 
-interface InterfaceReflectionInterface extends ClassLikeReflectionInterface, ConstantsInterface, MethodsInterface, InterfacesInterface
+interface InterfaceReflectionInterface extends ClassLikeReflectionInterface, ConstantsInterface, MethodsInterface,
+	InterfacesInterface
 {
 
 	/**

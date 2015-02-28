@@ -45,14 +45,15 @@ abstract class AbstractReflection implements AnnotationsInterface
 	public function getNamespaceName()
 	{
 		if ($this->parentNode instanceof Namespace_) {
-			return implode($this->parentNode->name->parts, self::NS_SEP);
+			return $this->parentNode->name->toString();
 
 		} elseif ($this instanceof PropertyReflection && $class = $this->getDeclaringClass()) {
 			/** @var ClassReflection $class */
 			return $class->getNamespaceName();
 
 		} elseif ($this instanceof ParameterReflection && $parentNode = $this->getDeclaringFunction()->getParentNode()) {
-			return implode($parentNode->name->parts, self::NS_SEP);
+			/** @var Stmt $parentNode */
+			return $parentNode->name->toString();
 		}
 
 		return '';

@@ -34,13 +34,10 @@ class InterfaceReflectionTest extends ParserAwareTestCase
 	}
 
 
-	public function testConstants()
+	public function testImplements()
 	{
-	}
-
-
-	public function testMethods()
-	{
+		$this->assertTrue($this->interfaceReflection->implementsInterface('Countable'));
+		$this->assertFalse($this->interfaceReflection->implementsInterface('ArrayAccess'));
 	}
 
 }
