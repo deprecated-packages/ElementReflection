@@ -20,12 +20,4 @@ interface ExtensionInterface
 	 */
 	function getExtension();
 
-
-	/**
-	 * Returns the PHP extension name.
-	 *
-	 * @return bool
-	 */
-	function getExtensionName();
-
 }

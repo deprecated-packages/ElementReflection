@@ -79,16 +79,6 @@ class ParameterReflection extends InternalReflectionParameter implements Interna
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getExtensionName()
-	{
-		$extension = $this->getExtension();
-		return $extension ? $extension->getName() : FALSE;
-	}
-
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function getDeclaringFunction()
 	{
 		$class = $this->getDeclaringClass();

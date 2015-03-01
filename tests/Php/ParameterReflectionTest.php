@@ -59,8 +59,9 @@ class ParameterReflectionTest extends ParserAwareTestCase
 
 	public function testGetExtension()
 	{
-		$this->assertInstanceOf(ReflectionExtension::class, $this->internalReflectionParameter->getExtension());
-		$this->assertSame('Core', $this->internalReflectionParameter->getExtensionName());
+		$extensionReflection = $this->internalReflectionParameter->getExtension();
+		$this->assertInstanceOf(ReflectionExtension::class, $extensionReflection);
+		$this->assertSame('Core', $extensionReflection->getName());
 	}
 
 }

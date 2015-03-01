@@ -41,8 +41,9 @@ class PropertyReflectionTest extends ParserAwareTestCase
 
 	public function testGetExtension()
 	{
-		$this->assertInstanceOf(ReflectionExtension::class, $this->internalReflectionProperty->getExtension());
-		$this->assertSame('Core', $this->internalReflectionProperty->getExtensionName());
+		$extensionReflection = $this->internalReflectionProperty->getExtension();
+		$this->assertInstanceOf(ReflectionExtension::class, $extensionReflection);
+		$this->assertSame('Core', $extensionReflection->getName());
 	}
 
 }

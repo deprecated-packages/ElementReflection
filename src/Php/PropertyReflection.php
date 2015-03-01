@@ -81,16 +81,6 @@ class PropertyReflection extends InternalReflectionProperty implements InternalR
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getExtensionName()
-	{
-		$extension = $this->getExtension();
-		return $extension ? $extension->getName() : FALSE;
-	}
-
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function getPrettyName()
 	{
 		return sprintf('%s::$%s', $this->getDeclaringClass()->getName(), $this->getName());
