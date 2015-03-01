@@ -16,15 +16,11 @@ use ApiGen\ElementReflection\ClassReflectionInterface;
 use ApiGen\ElementReflection\Storage\StorageInterface;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Use_;
 
 
 class ClassReflection extends AbstractClassLikeReflection implements ClassReflectionInterface
 {
-
-	/**
-	 * @var string[]
-	 */
-	private $namespaceAliases = [];
 
 	/**
 	 * @var StorageInterface
@@ -82,7 +78,21 @@ class ClassReflection extends AbstractClassLikeReflection implements ClassReflec
 	 */
 	public function getNamespaceAliases()
 	{
-		return $this->namespaceAliases;
+		$aliases = [];
+		foreach ($this->getParentNode()->stmts as $stmt) {
+			if ($stmt instanceof Use_) {
+				foreach ($stmt->uses as $use) {
+					$aliases[$use->alias] = $use->name->toString();
+				}
+			}
+		}
+
+		if ($this->getParentNode()->name) {
+			$namespace = $this->getParentNode()->name->toString();
+			$aliases[$namespace] = $namespace;
+		}
+
+		return $aliases;
 	}
 
 

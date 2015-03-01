@@ -13,7 +13,7 @@ abstract class ParserAwareTestCase extends PHPUnit_Framework_TestCase
 	/**
 	 * @var Container
 	 */
-	private $container;
+	protected $container;
 
 	/**
 	 * @var ParserInterface

@@ -19,12 +19,25 @@ class FqnNameAnalyzer
 {
 
 	/**
+	 * @param Name $name
+	 * @param string $namespace
 	 * @return string
-	 * @todo test
 	 */
-	public function detectFqnName(Name $trait, TraitReflection $parentClassLikeElement = NULL)
+	public function compactFqnName(Name $name, $namespace)
 	{
-		$name = $trait->toString();
+		if ($namespace) {
+			return $namespace . AbstractReflection::NS_SEP . $name->toString();
+		}
+		return $name->toString();
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function detectFqnName(Name $name, TraitReflection $parentClassLikeElement = NULL)
+	{
+		$name = $name->toString();
 
 		$namespaceName = '';
 		if ($parentClassLikeElement) {

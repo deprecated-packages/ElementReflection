@@ -76,4 +76,16 @@ class ClassReflectionTest extends ParserAwareTestCase
 		$this->assertArrayHasKey('Countable', $this->classReflection->getOwnInterfaces());
 	}
 
+
+	public function testNamespaceAliases()
+	{
+		$aliases = $this->classReflection->getNamespaceAliases();
+		$this->assertCount(1, $aliases);
+
+		$this->assertSame([
+			'ApiGen\ElementReflection\Tests\PhpParser\ClassReflection\ClassReflectionSource' =>
+			'ApiGen\ElementReflection\Tests\PhpParser\ClassReflection\ClassReflectionSource'
+		], $aliases);
+	}
+
 }

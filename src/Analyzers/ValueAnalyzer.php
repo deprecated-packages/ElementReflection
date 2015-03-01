@@ -27,10 +27,16 @@ class ValueAnalyzer
 	 */
 	private $storage;
 
+	/**
+	 * @var FqnNameAnalyzer
+	 */
+	private $fqnNameAnalyzer;
 
-	public function __construct(StorageInterface $storage)
+
+	public function __construct(StorageInterface $storage, FqnNameAnalyzer $fqnNameAnalyzer)
 	{
 		$this->storage = $storage;
+		$this->fqnNameAnalyzer = $fqnNameAnalyzer;
 	}
 
 
@@ -69,10 +75,13 @@ class ValueAnalyzer
 	 */
 	private function getConstantValue($constFetch, ClassReflectionInterface $declaringClass = NULL, $namespaceName)
 	{
-		$constantName = $constFetch->name;
+		if ($constFetch instanceof ConstFetch) {
+			$name = $this->fqnNameAnalyzer->compactFqnName($constFetch->name, $namespaceName);
+			return $this->storage->getConstant($name)->getValue();
 
-		if ($constFetch instanceof ClassConstFetch) {
-			$where = $constFetch->class->parts[0];
+		} elseif ($constFetch instanceof ClassConstFetch) {
+			$where = $constFetch->class->toString();
+			$constantName = $constFetch->name;
 			if ($where === 'self') {
 				if ($value = $this->getClassConstantValue($declaringClass, $constantName)) {
 					return $value;
@@ -82,20 +91,33 @@ class ValueAnalyzer
 				if ($value = $this->getClassConstantValue($declaringClass->getParentClass(), $constantName)) {
 					return $value;
 				}
+
+			} else {
+				foreach ($declaringClass->getNamespaceAliases() as $alias => $real) {
+					if ($where === $alias) {
+						$namespacedClassName = $real;
+
+					} else {
+						$namespacedClassName = $real . AbstractReflection::NS_SEP . $where;
+					}
+
+					if ($this->storage->hasClass($namespacedClassName)) {
+						$classReflection = $this->storage->getClass($namespacedClassName);
+						if ($value = $this->getClassConstantValue($classReflection, $constantName)) {
+							return $value;
+						}
+					}
+				}
+			}
+
+			$name = $this->fqnNameAnalyzer->compactFqnName($constFetch->name, $namespaceName);
+			if ($this->storage->hasClass($name)) {
+				$class = $this->storage->getClass($name);
+				if ($value = $this->getClassConstantValue($class, $constantName)) {
+					return $value;
+				}
 			}
 		}
-
-		$name = $constFetch->class ? $constFetch->class->parts[0] : $constFetch->name->parts[0];
-		$fqnName = ($namespaceName ? $namespaceName . AbstractReflection::NS_SEP : '') . $name;
-
-		if ($this->storage->hasClass($fqnName)) {
-			$class = $this->storage->getClass($fqnName);
-			if ($value = $this->getClassConstantValue($class, $constantName)) {
-				return $value;
-			}
-		}
-
-		return $this->storage->getConstant($fqnName)->getValue();
 	}
 
 
