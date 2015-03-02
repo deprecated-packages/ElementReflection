@@ -26,6 +26,12 @@ services:
 	- ApiGen\ElementReflection\PhpParser\Factory\PropertyReflectionFactoryInterface
 	- ApiGen\ElementReflection\PhpParser\Factory\TraitReflectionFactoryInterface
 
+	# magic elements
+	- ApiGen\ElementReflection\Magic\Extractors\MagicElementsExtractor
+	- ApiGen\ElementReflection\Magic\Extractors\MagicMethodsExtractor
+	- ApiGen\ElementReflection\Magic\Factory\MagicMethodReflectionFactoryInterface
+	- ApiGen\ElementReflection\Magic\Factory\MagicParameterReflectionFactoryInterface
+
 	# internal elements factories
 	- ApiGen\ElementReflection\Php\Factory\ClassConstantReflectionFactoryInterface
 	- ApiGen\ElementReflection\Php\Factory\ClassReflectionFactoryInterface
