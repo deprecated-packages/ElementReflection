@@ -9,7 +9,6 @@
 
 namespace ApiGen\ElementReflection;
 
-use ApiGen\ElementReflection\Behaviors\AnnotationsInterface;
 use ApiGen\ElementReflection\Behaviors\NamespacesInterface;
 use ApiGen\ElementReflection\Behaviors\ParametersInterface;
 use ApiGen\ElementReflection\Behaviors\StartEndLineInterface;

@@ -141,7 +141,7 @@ abstract class AbstractReflection implements AnnotationsInterface
 	/**
 	 * @return string
 	 */
-	protected function getDocComment()
+	public function getDocComment()
 	{
 		if ($docComment = $this->node->getDocComment()) {
 			return $docComment->getText();

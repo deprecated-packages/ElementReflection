@@ -12,6 +12,7 @@ namespace ApiGen\ElementReflection;
 use ApiGen\ElementReflection\Behaviors\AnnotationsInterface;
 use ApiGen\ElementReflection\Behaviors\ConstantsInterface;
 use ApiGen\ElementReflection\Behaviors\InterfacesInterface;
+use ApiGen\ElementReflection\Behaviors\MagicsInterface;
 use ApiGen\ElementReflection\Behaviors\MethodsInterface;
 use ApiGen\ElementReflection\Behaviors\NamespacesInterface;
 use ApiGen\ElementReflection\Behaviors\PropertiesInterface;
@@ -21,7 +22,7 @@ use ApiGen\ElementReflection\Behaviors\TraitsInterface;
 
 interface ClassReflectionInterface extends ClassLikeReflectionInterface, ConstantsInterface, PropertiesInterface,
 	MethodsInterface, StartEndLineInterface, AnnotationsInterface, NamespacesInterface, TraitsInterface,
-	InterfacesInterface
+	InterfacesInterface, MagicsInterface
 {
 
 	/**

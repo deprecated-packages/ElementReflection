@@ -10,6 +10,7 @@
 namespace ApiGen\ElementReflection\PhpParser;
 
 use ApiGen\ElementReflection\Inheritor\AnnotationInheritor;
+use ApiGen\ElementReflection\Magic\Extractors\MagicElementsExtractor;
 use ApiGen\ElementReflection\Parser\DocBlockParser;
 use ApiGen\ElementReflection\PhpParser\Builder\ClassLikeElementsBuilderInterface;
 use ApiGen\ElementReflection\ClassReflectionInterface;
@@ -32,6 +33,11 @@ class ClassReflection extends AbstractClassLikeReflection implements ClassReflec
 	 */
 	private $annotationInheritor;
 
+	/**
+	 * @var MagicElementsExtractor
+	 */
+	private $magicElementsExtractor;
+
 
 	public function __construct(
 		Class_ $node,
@@ -39,7 +45,8 @@ class ClassReflection extends AbstractClassLikeReflection implements ClassReflec
 		DocBlockParser $docBlockParser,
 		StorageInterface $storage,
 		ClassLikeElementsBuilderInterface $classLikeElementsBuilder,
-		AnnotationInheritor $annotationInheritor
+		AnnotationInheritor $annotationInheritor,
+		MagicElementsExtractor $magicElementsExtractor
 	) {
 		parent::__construct($classLikeElementsBuilder);
 		$this->node = $node;
@@ -47,6 +54,7 @@ class ClassReflection extends AbstractClassLikeReflection implements ClassReflec
 		$this->docBlockParser = $docBlockParser;
 		$this->storage = $storage;
 		$this->annotationInheritor = $annotationInheritor;
+		$this->magicElementsExtractor = $magicElementsExtractor;
 	}
 
 
@@ -422,6 +430,15 @@ class ClassReflection extends AbstractClassLikeReflection implements ClassReflec
 	 */
 	public function getTraitAliases()
 	{
+	}
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getMagicMethods()
+	{
+		return $this->magicElementsExtractor->getMagicMethodsFromClass($this);
 	}
 
 
