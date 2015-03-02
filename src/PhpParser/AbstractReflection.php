@@ -90,18 +90,6 @@ abstract class AbstractReflection implements AnnotationsInterface
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getDocComment()
-	{
-		if ($docComment = $this->node->getDocComment()) {
-			return $docComment->getText();
-		}
-		return '';
-	}
-
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function isDeprecated()
 	{
 		if ($this->hasAnnotation('deprecated')) {
@@ -147,6 +135,18 @@ abstract class AbstractReflection implements AnnotationsInterface
 	public function getParentNode()
 	{
 		return $this->parentNode;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	protected function getDocComment()
+	{
+		if ($docComment = $this->node->getDocComment()) {
+			return $docComment->getText();
+		}
+		return '';
 	}
 
 }

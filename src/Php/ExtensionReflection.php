@@ -11,7 +11,6 @@ namespace ApiGen\ElementReflection\Php;
 
 use ApiGen\ElementReflection\ClassConstantReflectionInterface;
 use ApiGen\ElementReflection\Storage\StorageInterface;
-use ApiGen\ElementReflection\Exception;
 use ApiGen\ElementReflection\ClassReflectionInterface;
 use ApiGen\ElementReflection\ExtensionReflectionInterface;
 use ApiGen\ElementReflection\FunctionReflectionInterface;

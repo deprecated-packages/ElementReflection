@@ -54,8 +54,7 @@ class ClassReflection extends AbstractClassLikeReflection implements PropertiesI
 		ClassConstantReflectionFactoryInterface $classConstantReflectionFactory
 	) {
 		parent::__construct(
-			$name, $methodReflectionFactory, $classConstantReflectionFactory,
-			$extensionReflectionFactory, $storage
+			$name, $methodReflectionFactory, $classConstantReflectionFactory, $extensionReflectionFactory, $storage
 		);
 		$this->classReflectionFactory = $classReflectionFactory;
 		$this->propertyReflectionFactory = $propertyReflectionFactory;
@@ -72,7 +71,8 @@ class ClassReflection extends AbstractClassLikeReflection implements PropertiesI
 
 
 	/**
-	 * {@inheritdoc}
+	 * @param string $className
+	 * @return bool
 	 */
 	public function isSubclassOf($className)
 	{

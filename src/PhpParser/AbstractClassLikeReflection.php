@@ -20,7 +20,6 @@ use ApiGen\ElementReflection\MethodReflectionInterface;
 use ApiGen\ElementReflection\PhpParser\Builder\ClassLikeElementsBuilderInterface;
 use ApiGen\ElementReflection\PropertyReflectionInterface;
 use ApiGen\ElementReflection\TraitReflectionInterface;
-use PhpParser\Node\Stmt;
 
 
 abstract class AbstractClassLikeReflection extends AbstractReflection
@@ -73,7 +72,7 @@ abstract class AbstractClassLikeReflection extends AbstractReflection
 
 
 	/**
-	 * @param $filter
+	 * @param int $filter
 	 * @return PropertyReflectionInterface[]
 	 */
 	protected function getProperties($filter = NULL)
@@ -99,7 +98,7 @@ abstract class AbstractClassLikeReflection extends AbstractReflection
 
 
 	/**
-	 * @param $filter
+	 * @param int $filter
 	 * @return PropertyReflection[]
 	 */
 	protected function getOwnProperties($filter = NULL)

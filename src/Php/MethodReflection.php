@@ -11,7 +11,6 @@ namespace ApiGen\ElementReflection\Php;
 
 use ApiGen;
 use ApiGen\ElementReflection\Behaviors\ExtensionInterface;
-use ApiGen\ElementReflection\Parser;
 use ApiGen\ElementReflection\Exception\RuntimeException;
 use ApiGen\ElementReflection\Php\Factory\ClassReflectionFactoryInterface;
 use ApiGen\ElementReflection\Php\Factory\ParameterReflectionFactoryInterface;

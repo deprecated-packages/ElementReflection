@@ -16,18 +16,15 @@ use ApiGen\ElementReflection\PhpParser\Factory\ClassConstantReflectionFactoryInt
 use ApiGen\ElementReflection\PhpParser\Factory\MethodReflectionFactoryInterface;
 use ApiGen\ElementReflection\PhpParser\Factory\PropertyReflectionFactoryInterface;
 use ApiGen\ElementReflection\PhpParser\Factory\TraitReflectionFactoryInterface;
-use ApiGen\ElementReflection\PhpParser\TraitReflection;
 use ApiGen\ElementReflection\Storage\StorageInterface;
 use PhpParser\Node;
 use PhpParser\Node\Name;
-use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\ClassConst;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\TraitUse;
-use PhpParser\NodeAbstract;
 
 
 class ClassLikeElementsBuilder implements ClassLikeElementsBuilderInterface
