@@ -4,7 +4,6 @@ namespace ApiGen\ElementReflection\Tests\Php;
 
 use ApiGen;
 use ApiGen\ElementReflection\Php\ParameterReflection;
-use ApiGen\ElementReflection\Storage\StorageInterface;
 use ApiGen\ElementReflection\Tests\ParserAwareTestCase;
 use ReflectionExtension;
 
@@ -15,13 +14,13 @@ class ParameterReflectionTest extends ParserAwareTestCase
 	/**
 	 * @var ParameterReflection
 	 */
-	private $internalReflectionParameter;
+	private $parameterReflection;
 
 
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->internalReflectionParameter = $this->parser->getStorage()
+		$this->parameterReflection = $this->parser->getStorage()
 			->getClass('Exception')
 			->getMethod('__construct')
 			->getParameter('message');
@@ -30,36 +29,27 @@ class ParameterReflectionTest extends ParserAwareTestCase
 
 	public function testName()
 	{
-		$this->assertSame('message', $this->internalReflectionParameter->getName());
-		$this->assertSame('Exception::__construct($message)', $this->internalReflectionParameter->getPrettyName());
+		$this->assertSame('message', $this->parameterReflection->getName());
+		$this->assertSame('Exception::__construct($message)', $this->parameterReflection->getPrettyName());
 	}
 
 
 	public function testClasses()
 	{
-		$this->assertSame('Exception', $this->internalReflectionParameter->getDeclaringClass()->getName());
-		$this->assertSame('__construct', $this->internalReflectionParameter->getDeclaringFunction()->getName());
+		$this->assertSame('Exception', $this->parameterReflection->getDeclaringClass()->getName());
+		$this->assertSame('__construct', $this->parameterReflection->getDeclaringFunction()->getName());
 	}
 
 
 	public function testIsVariadic()
 	{
-		$this->assertFalse($this->internalReflectionParameter->isVariadic());
-	}
-
-
-	/**
-	 * @expectedException \ReflectionException
-	 */
-	public function testGetDefaultValue()
-	{
-		$this->internalReflectionParameter->getDefaultValue();
+		$this->assertFalse($this->parameterReflection->isVariadic());
 	}
 
 
 	public function testGetExtension()
 	{
-		$extensionReflection = $this->internalReflectionParameter->getExtension();
+		$extensionReflection = $this->parameterReflection->getExtension();
 		$this->assertInstanceOf(ReflectionExtension::class, $extensionReflection);
 		$this->assertSame('Core', $extensionReflection->getName());
 	}

@@ -18,73 +18,67 @@ class ClassReflectionTest extends ParserAwareTestCase
 	/**
 	 * @var ApiGen\ElementReflection\Php\ClassReflection
 	 */
-	private $internalReflectionClass;
+	private $classReflection;
 
 
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->internalReflectionClass = $this->parser->getStorage()->getClass('Exception');
+		$this->classReflection = $this->parser->getStorage()->getClass('Exception');
 	}
 
 
 	public function testBasicMethods()
 	{
-		$this->assertTrue($this->internalReflectionClass->isException());
+		$this->assertTrue($this->classReflection->isException());
 	}
 
 
 	public function testParents()
 	{
-		$this->assertNull($this->internalReflectionClass->getParentClass());
-		$this->assertSame([], $this->internalReflectionClass->getParentClasses());
-		$this->assertSame([], $this->internalReflectionClass->getParentClassNameList());
+		$this->assertNull($this->classReflection->getParentClass());
+		$this->assertSame([], $this->classReflection->getParentClasses());
+		$this->assertSame([], $this->classReflection->getParentClassNameList());
 	}
 
 
 	public function testMethods()
 	{
-		$this->assertFalse($this->internalReflectionClass->hasMethod('...'));
-		$this->assertFalse($this->internalReflectionClass->hasOwnMethod('...'));
-		$this->assertInstanceOf(MethodReflection::class, $this->internalReflectionClass->getMethod('getMessage'));
+		$this->assertFalse($this->classReflection->hasMethod('...'));
+		$this->assertFalse($this->classReflection->hasOwnMethod('...'));
+		$this->assertInstanceOf(MethodReflection::class, $this->classReflection->getMethod('getMessage'));
 
-		$this->assertCount(10, $this->internalReflectionClass->getOwnMethods());
+		$this->assertCount(10, $this->classReflection->getOwnMethods());
 	}
 
 
 	public function testConstants()
 	{
-		$this->assertFalse($this->internalReflectionClass->hasOwnConstant('...'));
-		$this->assertSame([], $this->internalReflectionClass->getOwnConstants());
+		$this->assertFalse($this->classReflection->hasOwnConstant('...'));
+		$this->assertSame([], $this->classReflection->getOwnConstants());
 	}
 
 
 	public function testProperties()
 	{
-		$this->assertInstanceOf(PropertyReflection::class, $this->internalReflectionClass->getProperty('message'));
-		$this->assertCount(7, $this->internalReflectionClass->getProperties());
-		$this->assertFalse($this->internalReflectionClass->hasOwnProperty('...'));
-		$this->assertCount(7, $this->internalReflectionClass->getOwnProperties());
-	}
-
-
-	public function testStaticProperties()
-	{
-		$this->assertCount(0, $this->internalReflectionClass->getStaticProperties());
+		$this->assertInstanceOf(PropertyReflection::class, $this->classReflection->getProperty('message'));
+		$this->assertCount(7, $this->classReflection->getProperties());
+		$this->assertFalse($this->classReflection->hasOwnProperty('...'));
+		$this->assertCount(7, $this->classReflection->getOwnProperties());
 	}
 
 
 	public function testSubclasses()
 	{
-		$this->assertSame([], $this->internalReflectionClass->getDirectSubclasses());
-		$this->assertSame([], $this->internalReflectionClass->getIndirectSubclasses());
+		$this->assertSame([], $this->classReflection->getDirectSubclasses());
+		$this->assertSame([], $this->classReflection->getIndirectSubclasses());
 	}
 
 
 	public function testInterfaces()
 	{
-		$this->assertSame([], $this->internalReflectionClass->getInterfaces());
-		$this->assertSame([], $this->internalReflectionClass->getOwnInterfaces());
+		$this->assertSame([], $this->classReflection->getInterfaces());
+		$this->assertSame([], $this->classReflection->getOwnInterfaces());
 	}
 
 
@@ -92,19 +86,19 @@ class ClassReflectionTest extends ParserAwareTestCase
 	{
 		$classReflectionMock = Mockery::mock(ApiGen\ElementReflection\PhpParser\ClassReflection::class);
 		$classReflectionMock->shouldReceive('getName')->andReturn('SomeClass');
-		$this->internalReflectionClass->isSubclassOf($classReflectionMock->getName());
+		$this->classReflection->isSubclassOf($classReflectionMock->getName());
 	}
 
 
 	public function testImplementsInterface()
 	{
-		$this->assertFalse($this->internalReflectionClass->implementsInterface('Countable'));
+		$this->assertFalse($this->classReflection->implementsInterface('Countable'));
 	}
 
 
 	public function testGetExtension()
 	{
-		$extensionReflection = $this->internalReflectionClass->getExtension();
+		$extensionReflection = $this->classReflection->getExtension();
 		$this->assertInstanceOf(ExtensionReflection::class, $extensionReflection);
 	}
 

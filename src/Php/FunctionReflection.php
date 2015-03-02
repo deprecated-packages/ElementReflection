@@ -9,32 +9,26 @@
 
 namespace ApiGen\ElementReflection\Php;
 
-use ApiGen;
 use ApiGen\ElementReflection\Behaviors\ExtensionInterface;
-use ApiGen\ElementReflection\Parser;
 use ApiGen\ElementReflection\Storage\StorageInterface;
 use ApiGen\ElementReflection\Exception\RuntimeException;
 use ApiGen\ElementReflection\Php\Factory\ExtensionReflectionFactoryInterface;
 use ApiGen\ElementReflection\Php\Factory\ParameterReflectionFactoryInterface;
-use ReflectionFunction as InternalReflectionFunction;
-use ReflectionParameter as InternalReflectionParameter;
+use ReflectionFunction;
 
 
-class FunctionReflection extends InternalReflectionFunction implements InternalReflectionInterface,
-	ExtensionInterface
+class FunctionReflection implements InternalReflectionInterface, ExtensionInterface
 {
 
 	/**
-	 * Function parameter reflections.
-	 *
-	 * @var array
-	 */
-	private $parameters;
-
-	/**
-	 * @var Parser
+	 * @var StorageInterface
 	 */
 	private $storage;
+
+	/**
+	 * @var ParameterReflection[]
+	 */
+	private $parameters;
 
 	/**
 	 * @var ParameterReflectionFactoryInterface
@@ -45,6 +39,11 @@ class FunctionReflection extends InternalReflectionFunction implements InternalR
 	 * @var ExtensionReflectionFactoryInterface
 	 */
 	private $extensionReflectionFactory;
+
+	/**
+	 * @var ReflectionFunction
+	 */
+	private $internalReflectionFunction;
 
 
 	/**
@@ -59,7 +58,7 @@ class FunctionReflection extends InternalReflectionFunction implements InternalR
 		ExtensionReflectionFactoryInterface $extensionReflectionFactory,
 		ParameterReflectionFactoryInterface $parameterReflectionFactory
 	) {
-		parent::__construct($name);
+		$this->internalReflectionFunction = new ReflectionFunction($name);
 		$this->storage = $storage;
 		$this->extensionReflectionFactory = $extensionReflectionFactory;
 		$this->parameterReflectionFactory = $parameterReflectionFactory;
@@ -69,32 +68,32 @@ class FunctionReflection extends InternalReflectionFunction implements InternalR
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getExtension()
+	public function getName()
 	{
-		return $this->extensionReflectionFactory->create(parent::getExtension()->getName());
+		return $this->internalReflectionFunction->getName();
 	}
 
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getParameter($parameter)
+	public function getExtension()
 	{
-		$parameters = $this->getParameters();
-		if (is_numeric($parameter)) {
-			if ( ! isset($parameters[$parameter])) {
-				throw new RuntimeException(sprintf('There is no parameter at position "%d".', $parameter));
-			}
-			return $parameters[$parameter];
+		return $this->extensionReflectionFactory->create($this->internalReflectionFunction->getExtension()->getName());
+	}
 
-		} else {
-			foreach ($parameters as $reflection) {
-				if ($reflection->getName() === $parameter) {
-					return $reflection;
-				}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getParameter($name)
+	{
+		foreach ($this->getParameters() as $parameters) {
+			if ($parameters->getName() === $name) {
+				return $parameters;
 			}
-			throw new RuntimeException(sprintf('There is no parameter "%s".', $parameter));
 		}
+		throw new RuntimeException(sprintf('There is no parameter "%s".', $name));
 	}
 
 
@@ -104,12 +103,14 @@ class FunctionReflection extends InternalReflectionFunction implements InternalR
 	public function getParameters()
 	{
 		if ($this->parameters === NULL) {
-			$this->parameters = array_map(function (InternalReflectionParameter $parameter) {
-				return $this->parameterReflectionFactory->create(
+			$parameters = [];
+			foreach ($this->internalReflectionFunction->getParameters() as $parameter) {
+				$parameters[$parameter->getName()] = $this->parameterReflectionFactory->create(
 					$parameter->getDeclaringFunction()->getName(),
 					$parameter->getName()
 				);
-			}, parent::getParameters());
+			}
+			$this->parameters = $parameters;
 		}
 		return $this->parameters;
 	}
@@ -129,7 +130,7 @@ class FunctionReflection extends InternalReflectionFunction implements InternalR
 	 */
 	public function isVariadic()
 	{
-		return PHP_VERSION_ID >= 50600 ? parent::isVariadic() : FALSE;
+		return PHP_VERSION_ID >= 50600 ? $this->internalReflectionFunction->isVariadic() : FALSE;
 	}
 
 }

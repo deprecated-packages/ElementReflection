@@ -3,11 +3,9 @@
 namespace ApiGen\ElementReflection\Tests\Php;
 
 use ApiGen;
+use ApiGen\ElementReflection\Php\ExtensionReflection;
 use ApiGen\ElementReflection\Php\PropertyReflection;
-use ApiGen\ElementReflection\Storage\StorageInterface;
 use ApiGen\ElementReflection\Tests\ParserAwareTestCase;
-use ApiGen\ElementReflection\Tests\TestCase;
-use ReflectionExtension;
 
 
 class PropertyReflectionTest extends ParserAwareTestCase
@@ -42,7 +40,7 @@ class PropertyReflectionTest extends ParserAwareTestCase
 	public function testGetExtension()
 	{
 		$extensionReflection = $this->internalReflectionProperty->getExtension();
-		$this->assertInstanceOf(ReflectionExtension::class, $extensionReflection);
+		$this->assertInstanceOf(ExtensionReflection::class, $extensionReflection);
 		$this->assertSame('Core', $extensionReflection->getName());
 	}
 

@@ -16,9 +16,9 @@ interface InterfaceReflectionFactoryInterface
 {
 
 	/**
-	 * @param string $interfaceName
+	 * @param string $name
 	 * @return InterfaceReflection
 	 */
-	function create($interfaceName);
+	function create($name);
 
 }

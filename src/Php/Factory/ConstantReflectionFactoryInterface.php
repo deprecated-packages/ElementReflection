@@ -16,10 +16,10 @@ interface ConstantReflectionFactoryInterface
 {
 
 	/**
-	 * @param string $constantName
-	 * @param mixed $constantValue
+	 * @param string $name
+	 * @param mixed $value
 	 * @return ConstantReflection
 	 */
-	function create($constantName, $constantValue);
+	function create($name, $value);
 
 }

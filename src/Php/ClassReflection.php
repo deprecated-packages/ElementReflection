@@ -11,6 +11,8 @@ namespace ApiGen\ElementReflection\Php;
 
 use ApiGen;
 use ApiGen\ElementReflection\Behaviors\ExtensionInterface;
+use ApiGen\ElementReflection\Behaviors\MethodsInterface;
+use ApiGen\ElementReflection\Behaviors\PropertiesInterface;
 use ApiGen\ElementReflection\Php\Factory\ClassConstantReflectionFactoryInterface;
 use ApiGen\ElementReflection\Storage\StorageInterface;
 use ApiGen\ElementReflection\Exception;
@@ -20,12 +22,12 @@ use ApiGen\ElementReflection\Php\Factory\ExtensionReflectionFactoryInterface;
 use ApiGen\ElementReflection\Php\Factory\MethodReflectionFactoryInterface;
 use ApiGen\ElementReflection\Php\Factory\PropertyReflectionFactoryInterface;
 use ApiGen\ElementReflection\ClassReflectionInterface;
-use ReflectionClass as InternalReflectionClass;
+use ReflectionClass;
 use ReflectionProperty as InternalReflectionProperty;
 use ReflectionMethod as InternalReflectionMethod;
 
 
-class ClassReflection extends InternalReflectionClass implements InternalReflectionInterface, ExtensionInterface
+class ClassReflection implements InternalReflectionInterface, PropertiesInterface, MethodsInterface, ExtensionInterface
 {
 
 	/**
@@ -34,22 +36,22 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	private $storage;
 
 	/**
-	 * @var array
+	 * @var InterfaceReflection[]
 	 */
 	private $interfaces;
 
 	/**
-	 * @var array
+	 * @var MethodReflection[]
 	 */
 	private $methods;
 
 	/**
-	 * @var array
+	 * @var ClassConstantReflection[]
 	 */
 	private $constants;
 
 	/**
-	 * @var array
+	 * @var PropertyReflection[]
 	 */
 	private $properties;
 
@@ -78,6 +80,11 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	 */
 	private $classConstantReflectionFactory;
 
+	/**
+	 * @var ReflectionClass
+	 */
+	private $internalReflectionClass;
+
 
 	/**
 	 * @param string $name
@@ -97,7 +104,8 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 		PropertyReflectionFactoryInterface $propertyReflectionFactory,
 		ClassConstantReflectionFactoryInterface $classConstantReflectionFactory
 	) {
-		parent::__construct($name);
+
+		$this->internalReflectionClass = new ReflectionClass($name);
 		$this->storage = $storage;
 		$this->extensionReflectionFactory = $extensionReflectionFactory;
 		$this->classReflectionFactory = $classReflectionFactory;
@@ -108,11 +116,20 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 
 
 	/**
-	 * @return ExtensionReflection
+	 * {@inheritdoc}
+	 */
+	public function getName()
+	{
+		return $this->internalReflectionClass->getName();
+	}
+
+
+	/**
+	 * {@inheritdoc}
 	 */
 	public function getExtension()
 	{
-		return $this->extensionReflectionFactory->create(parent::getExtension()->getName());
+		return $this->extensionReflectionFactory->create($this->internalReflectionClass->getExtension()->getName());
 	}
 
 
@@ -139,7 +156,7 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	 */
 	public function getParentClass()
 	{
-		$parent = parent::getParentClass();
+		$parent = $this->internalReflectionClass->getParentClass();
 		return $parent ? $this->classReflectionFactory->create($parent) : NULL;
 	}
 
@@ -180,7 +197,7 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	{
 		if ($this->interfaces === NULL) {
 			$interface = [];
-			foreach ($this->getInterfaceNames() as $name) {
+			foreach ($this->internalReflectionClass->getInterfaceNames() as $name) {
 				$interface[$name] = $this->storage->getInterface($name);
 			}
 			$this->interfaces = $interface;
@@ -225,12 +242,17 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getMethods()
+	public function getMethods($filter = NULL)
 	{
 		if ($this->methods === NULL) {
-			$this->methods = array_map(function (InternalReflectionMethod $method) {
-				return $this->methodReflectionFactory->create($method->getDeclaringClass()->getName(), $method->getName());
-			}, parent::getMethods());
+			$methods = [];
+			foreach ($this->internalReflectionClass->getMethods() as $method) {
+				$methods[$method->getName()] = $this->methodReflectionFactory->create(
+					$method->class,
+					$method->getName()
+				);
+			}
+			$this->methods = $methods;
 		}
 		return $this->methods;
 	}
@@ -248,7 +270,7 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getOwnMethods()
+	public function getOwnMethods($filter = NULL)
 	{
 		return array_filter($this->getMethods(), function (MethodReflection $method) {
 			return $this->getName() === $method->getDeclaringClass()->getName();
@@ -286,7 +308,7 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 
 		if ($this->constants === NULL) {
 			$this->constants = [];
-			foreach (parent::getConstants() as $name => $value) {
+			foreach ($this->internalReflectionClass->getConstants() as $name => $value) {
 				$this->constants[$name] = $this->classConstantReflectionFactory->create($name, $value, $this);
 			}
 		}
@@ -308,7 +330,19 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	 */
 	public function getOwnConstants()
 	{
-		return array_diff_assoc(parent::getConstants(), $this->getParentClass() ? parent::getParentClass()->getConstants() : []);
+		return array_diff_assoc($this->internalReflectionClass->getConstants(), $this->getParentClass()
+			? $this->internalReflectionClass->getParentClass()->getConstants()
+			: []
+		);
+	}
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function hasProperty($name)
+	{
+		return isset($this->getProperties()[$name]);
 	}
 
 
@@ -329,12 +363,17 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getProperties()
+	public function getProperties($filter = NULL)
 	{
 		if ($this->properties === NULL) {
-			$this->properties = array_map(function (InternalReflectionProperty $property) {
-				return $this->propertyReflectionFactory->create($property->getDeclaringClass()->getName(), $property->getName());
-			}, parent::getProperties());
+			$properties = [];
+			foreach ($this->internalReflectionClass->getProperties() as $property) {
+				$properties[$property->getName()] = $this->propertyReflectionFactory->create(
+					$property->getDeclaringClass()->getName(),
+					$property->getName()
+				);
+			}
+			$this->properties = $properties;
 		}
 		return $this->properties;
 	}
@@ -357,7 +396,7 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getOwnProperties()
+	public function getOwnProperties($filter = NULL)
 	{
 		return array_filter($this->getProperties(), function (PropertyReflection $property) {
 			return $property->getDeclaringClass()->getName() === $this->getName();
@@ -371,10 +410,10 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	public function getDirectSubclasses()
 	{
 		return array_filter($this->getInternalTokenizedClasses(), function (ClassReflectionInterface $class) {
-			if ( ! $class->isSubclassOf($this->name)) {
+			if ( ! $class->isSubclassOf($this->getName())) {
 				return FALSE;
 			}
-			return $class->getParentClass() === NULL || ! $class->getParentClass()->isSubClassOf($this->name);
+			return $class->getParentClass() === NULL || ! $class->getParentClass()->isSubClassOf($this->getName());
 		});
 	}
 
@@ -385,10 +424,10 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	public function getIndirectSubclasses()
 	{
 		return array_filter($this->getInternalTokenizedClasses(), function (ClassReflectionInterface $class) {
-			if ( ! $class->isSubclassOf($this->name)) {
+			if ( ! $class->isSubclassOf($this->getName())) {
 				return FALSE;
 			}
-			return $class->getParentClass() !== NULL && $class->getParentClass()->isSubClassOf($this->name);
+			return $class->getParentClass() !== NULL && $class->getParentClass()->isSubClassOf($this->getName());
 		});
 	}
 
@@ -399,6 +438,15 @@ class ClassReflection extends InternalReflectionClass implements InternalReflect
 	private function getInternalTokenizedClasses()
 	{
 		return $this->storage->getInternalClasses();
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getDefaultValues()
+	{
+		return $this->internalReflectionClass->getDefaultProperties();
 	}
 
 }

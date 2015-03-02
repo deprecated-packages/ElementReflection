@@ -12,11 +12,10 @@ namespace ApiGen\ElementReflection\Php;
 use ApiGen\ElementReflection\Behaviors\ExtensionInterface;
 use ApiGen\ElementReflection\Storage\StorageInterface;
 use ApiGen\ElementReflection\Php\Factory\ClassReflectionFactoryInterface;
-use ReflectionProperty as InternalReflectionProperty;
+use ReflectionProperty;
 
 
-class PropertyReflection extends InternalReflectionProperty implements InternalReflectionInterface,
-	ExtensionInterface
+class PropertyReflection implements InternalReflectionInterface, ExtensionInterface
 {
 
 	/**
@@ -42,7 +41,7 @@ class PropertyReflection extends InternalReflectionProperty implements InternalR
 		StorageInterface $storage,
 		ClassReflectionFactoryInterface $classReflectionFactory
 	) {
-		parent::__construct($className, $propertyName);
+		$this->internalReflectionProperty = new ReflectionProperty($className, $propertyName);
 		$this->storage = $storage;
 		$this->classReflectionFactory = $classReflectionFactory;
 	}
@@ -51,9 +50,18 @@ class PropertyReflection extends InternalReflectionProperty implements InternalR
 	/**
 	 * {@inheritdoc}
 	 */
+	public function getName()
+	{
+		return $this->internalReflectionProperty->getName();
+	}
+
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function getDeclaringClass()
 	{
-		return $this->classReflectionFactory->create(parent::getDeclaringClass()->getName());
+		return $this->classReflectionFactory->create($this->internalReflectionProperty->getDeclaringClass()->getName());
 	}
 
 
@@ -64,8 +72,8 @@ class PropertyReflection extends InternalReflectionProperty implements InternalR
 	 */
 	public function getDefaultValue()
 	{
-		$values = $this->getDeclaringClass()->getDefaultProperties();
-		return $values[$this->getName()];
+		$defaultValues = $this->getDeclaringClass()->getDefaultValues();
+		return $defaultValues[$this->getName()];
 	}
 
 

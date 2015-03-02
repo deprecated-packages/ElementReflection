@@ -25,13 +25,13 @@ class ConstantReflection implements InternalReflectionInterface
 
 
 	/**
-	 * @param string $constantName
-	 * @param mixed $constantValue
+	 * @param string $name
+	 * @param mixed $value
 	 */
-	public function __construct($constantName, $constantValue)
+	public function __construct($name, $value)
 	{
-		$this->name = $constantName;
-		$this->value = $constantValue;
+		$this->name = $name;
+		$this->value = $value;
 	}
 
 

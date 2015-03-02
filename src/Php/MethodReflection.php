@@ -15,12 +15,11 @@ use ApiGen\ElementReflection\Parser;
 use ApiGen\ElementReflection\Exception\RuntimeException;
 use ApiGen\ElementReflection\Php\Factory\ClassReflectionFactoryInterface;
 use ApiGen\ElementReflection\Php\Factory\ParameterReflectionFactoryInterface;
-use ReflectionMethod as InternalReflectionMethod;
-use ReflectionParameter as InternalReflectionParameter;
+use ReflectionMethod;
+use ReflectionParameter;
 
 
-class MethodReflection extends InternalReflectionMethod implements InternalReflectionInterface,
-	ExtensionInterface
+class MethodReflection implements InternalReflectionInterface, ExtensionInterface
 {
 
 	/**
@@ -38,6 +37,11 @@ class MethodReflection extends InternalReflectionMethod implements InternalRefle
 	 */
 	private $parameterReflectionFactory;
 
+	/**
+	 * @var ReflectionMethod
+	 */
+	private $internalReflectionMethod;
+
 
 	/**
 	 * @param mixed $className
@@ -51,7 +55,7 @@ class MethodReflection extends InternalReflectionMethod implements InternalRefle
 		ClassReflectionFactoryInterface $classReflectionFactory,
 		ParameterReflectionFactoryInterface $parameterReflectionFactory
 	) {
-		parent::__construct($className, $methodName);
+		$this->internalReflectionMethod = new ReflectionMethod($className, $methodName);
 		$this->classReflectionFactory = $classReflectionFactory;
 		$this->parameterReflectionFactory = $parameterReflectionFactory;
 	}
@@ -60,9 +64,18 @@ class MethodReflection extends InternalReflectionMethod implements InternalRefle
 	/**
 	 * {@inheritdoc}
 	 */
+	public function getName()
+	{
+		return $this->internalReflectionMethod->getName();
+	}
+
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function getDeclaringClass()
 	{
-		return $this->classReflectionFactory->create(parent::getDeclaringClass()->getName());
+		return $this->classReflectionFactory->create($this->internalReflectionMethod->getDeclaringClass()->getName());
 	}
 
 
@@ -95,13 +108,13 @@ class MethodReflection extends InternalReflectionMethod implements InternalRefle
 	public function getParameters()
 	{
 		if ($this->parameters === NULL) {
-			$this->parameters = array_map(function (InternalReflectionParameter $parameter) {
+			$this->parameters = array_map(function (ReflectionParameter $parameter) {
 				return $this->parameterReflectionFactory->create(
 					$parameter->getDeclaringFunction()->getName(),
 					$parameter->getName(),
 					$parameter->getDeclaringClass()->getName()
 				);
-			}, parent::getParameters());
+			}, $this->internalReflectionMethod->getParameters());
 		}
 		return $this->parameters;
 	}
@@ -121,7 +134,16 @@ class MethodReflection extends InternalReflectionMethod implements InternalRefle
 	 */
 	public function isVariadic()
 	{
-		return PHP_VERSION_ID >= 50600 ? parent::isVariadic() : FALSE;
+		return PHP_VERSION_ID >= 50600 ? $this->internalReflectionMethod->isVariadic() : FALSE;
+	}
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getExtension()
+	{
+		return $this->internalReflectionMethod->getExtension();
 	}
 
 }

@@ -9,33 +9,31 @@
 
 namespace ApiGen\ElementReflection\Php;
 
+use ApiGen\ElementReflection\ClassConstantReflectionInterface;
 use ApiGen\ElementReflection\Storage\StorageInterface;
 use ApiGen\ElementReflection\Exception;
-use ApiGen\ElementReflection\Php\Factory\ExtensionReflectionFactoryInterface;
 use ApiGen\ElementReflection\ClassReflectionInterface;
-use ApiGen\ElementReflection\ConstantReflectionInterface;
 use ApiGen\ElementReflection\ExtensionReflectionInterface;
 use ApiGen\ElementReflection\FunctionReflectionInterface;
-use Reflector;
-use ReflectionExtension as InternalReflectionExtension;
+use ReflectionExtension;
 
 
-class ExtensionReflection extends InternalReflectionExtension implements InternalReflectionInterface,
+class ExtensionReflection implements InternalReflectionInterface,
 	ExtensionReflectionInterface
 {
 
 	/**
-	 * @var array|ClassReflectionInterface[]
+	 * @var ClassReflectionInterface[]
 	 */
 	private $classes;
 
 	/**
-	 * @var array|ConstantReflectionInterface[]
+	 * @var ClassConstantReflectionInterface[]
 	 */
 	private $constants;
 
 	/**
-	 * @var array|FunctionReflectionInterface[]
+	 * @var FunctionReflectionInterface[]
 	 */
 	private $functions;
 
@@ -51,8 +49,17 @@ class ExtensionReflection extends InternalReflectionExtension implements Interna
 	 */
 	public function __construct($name, StorageInterface $storage)
 	{
-		parent::__construct($name);
+		$this->internalReflectionExtension = new ReflectionExtension($name);
 		$this->storage = $storage;
+	}
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getName()
+	{
+		return $this->internalReflectionExtension->getName();
 	}
 
 
@@ -74,7 +81,7 @@ class ExtensionReflection extends InternalReflectionExtension implements Interna
 		if ($this->classes === NULL) {
 			$this->classes = array_map(function ($className) {
 				return $this->storage->getClass($className);
-			}, $this->getClassNames());
+			}, $this->internalReflectionExtension->getClassNames());
 		}
 		return $this->classes;
 	}
@@ -90,7 +97,6 @@ class ExtensionReflection extends InternalReflectionExtension implements Interna
 	}
 
 
-
 	/**
 	 * {@inheritdoc}
 	 */
@@ -99,7 +105,7 @@ class ExtensionReflection extends InternalReflectionExtension implements Interna
 		if ($this->constants === NULL) {
 			$this->constants = array_map(function ($constantName) {
 				return $this->storage->getConstant($constantName);
-			}, array_keys(parent::getConstants()));
+			}, array_keys($this->internalReflectionExtension->getConstants()));
 		}
 		return $this->constants;
 	}
@@ -123,7 +129,7 @@ class ExtensionReflection extends InternalReflectionExtension implements Interna
 		if ($this->functions === NULL) {
 			$this->classes = array_map(function ($functionName) {
 				return $this->storage->getFunction($functionName);
-			}, array_keys(parent::getFunctions()));
+			}, array_keys($this->internalReflectionExtension->getFunctions()));
 		}
 		return (array) $this->functions;
 	}

@@ -17,11 +17,11 @@ interface ClassConstantReflectionFactoryInterface
 {
 
 	/**
-	 * @param string $constantName
-	 * @param mixed $constantValue
+	 * @param string $name
+	 * @param mixed $value
 	 * @param ClassReflection $declaringClass
 	 * @return ClassConstantReflection
 	 */
-	function create($constantName, $constantValue, ClassReflection $declaringClass);
+	function create($name, $value, ClassReflection $declaringClass);
 
 }

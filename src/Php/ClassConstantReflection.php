@@ -10,7 +10,6 @@
 namespace ApiGen\ElementReflection\Php;
 
 use ApiGen\ElementReflection\Storage\StorageInterface;
-use ApiGen\ElementReflection\Exception\RuntimeException;
 
 
 class ClassConstantReflection implements InternalReflectionInterface
@@ -38,24 +37,24 @@ class ClassConstantReflection implements InternalReflectionInterface
 
 
 	/**
-	 * @param string $constantName
-	 * @param mixed $constantValue
+	 * @param string $name
+	 * @param mixed $value
 	 * @param ClassReflection $declaringClass
 	 * @param StorageInterface $storage
 	 */
-	public function __construct($constantName, $constantValue, ClassReflection $declaringClass, StorageInterface $storage)
+	public function __construct($name, $value, ClassReflection $declaringClass, StorageInterface $storage)
 	{
-		$this->name = $constantName;
-		$this->value = $constantValue;
+		$this->name = $name;
+		$this->value = $value;
 		$this->storage = $storage;
 
 		$realParent = NULL;
-		if (array_key_exists($constantName, $declaringClass->getOwnConstants())) {
+		if (array_key_exists($name, $declaringClass->getOwnConstants())) {
 			$realParent = $declaringClass;
 		}
 		if ($realParent === NULL) {
 			foreach ($declaringClass->getParentClasses() as $grandParent) {
-				if (array_key_exists($constantName, $grandParent->getOwnConstants())) {
+				if (array_key_exists($name, $grandParent->getOwnConstants())) {
 					$realParent = $grandParent;
 					break;
 				}

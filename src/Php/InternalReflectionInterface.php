@@ -13,4 +13,9 @@ namespace ApiGen\ElementReflection\Php;
 interface InternalReflectionInterface
 {
 
+	/**
+	 * @return string
+	 */
+	function getName();
+
 }
