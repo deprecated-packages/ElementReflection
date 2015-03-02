@@ -182,11 +182,11 @@ abstract class AbstractClassLikeReflection extends AbstractReflection
 	protected function getOwnInterfaces()
 	{
 		if ($this instanceof InterfaceReflectionInterface) {
-			/** @var AbstractReflection $this */
+			/** @var AbstractReflection|AbstractClassLikeReflection $this */
 			return $this->classLikeElementsBuilder->buildInterfaces($this->node->extends, $this);
 
 		} elseif ($this instanceof ClassReflectionInterface) {
-			/** @var AbstractReflection $this */
+			/** @var AbstractReflection|AbstractClassLikeReflection $this */
 			return $this->classLikeElementsBuilder->buildInterfaces($this->node->implements, $this);
 		}
 	}
